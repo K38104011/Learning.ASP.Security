@@ -6,13 +6,13 @@ namespace Claims.Base.Controllers
     public class HomeController : ApiController
     {
 
-        [Permission("MyApplication.ViewHomePage, MyApplication.ViewIndex")]
+        [Permission("MyApplication.ViewHomePage", "MyApplication.ViewIndex")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        [Permission("MyApplication.ViewHomePage, MyApplication.DontExisted")]
+        [Permission("MyApplication.ViewHomePage", "MyApplication.DontExisted")]
         public string Get(int id)
         {
             return "value";

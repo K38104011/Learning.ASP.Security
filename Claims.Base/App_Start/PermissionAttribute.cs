@@ -17,9 +17,9 @@ namespace Claims.Base
         {
         }
 
-        public PermissionAttribute(string permissions)
+        public PermissionAttribute(params string[] permissions)
         {
-            Permissions = permissions.Split(',').Select(permission => permission.Trim()).ToArray();
+            Permissions = permissions;
         }
 
         public override void OnAuthorization(HttpActionContext actionContext)
