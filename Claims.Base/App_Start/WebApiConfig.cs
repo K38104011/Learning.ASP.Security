@@ -11,7 +11,6 @@ namespace Claims.Base
         {
             // Web API configuration and services
             config.MessageHandlers.Add(new AuthHandler());
-            config.Filters.Add(new PermissionAttribute());
 
             // Web API routes
             config.MapHttpAttributeRoutes();
