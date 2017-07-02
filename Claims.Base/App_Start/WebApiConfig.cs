@@ -11,6 +11,7 @@ namespace Claims.Base
         {
             // Web API configuration and services
             config.MessageHandlers.Add(new AuthHandler());
+            config.Filters.Add(new PermissionAttribute());
 
             // Web API routes
             config.MapHttpAttributeRoutes();
@@ -20,6 +21,7 @@ namespace Claims.Base
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
         }
     }
 }
