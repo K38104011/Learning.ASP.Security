@@ -1,6 +1,5 @@
 ﻿@{
     ViewBag.Title = "Login";
-    
 }
 
 <h2>Login</h2>
@@ -8,6 +7,7 @@
 @{
     using (Html.BeginForm("GoogleLogin", "Account"))
     {
+        @Html.AntiForgeryToken()
         <button class="btn btn-primary" type="submit">Log in via Google</button>
     }
 }

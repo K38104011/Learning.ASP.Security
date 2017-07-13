@@ -1,7 +1,8 @@
-﻿@model dynamic
+﻿@using Microsoft.AspNet.Identity
+@model dynamic
 
 @{
     ViewBag.Title = "title";
 }
 
-<h2>Index View</h2>
+<h2>@User.Identity.GetUserName()</h2>

@@ -1,72 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
 namespace Claims.Base.Controllers
 {
     public class AccountController : Controller
     {
-        // GET: Account
-        [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        private static List<string> dumpData = new List<string>()
         {
-            ViewBag.ReturnUrl = returnUrl;
+            "phamdanghoanggiang@gmail.com"
+        };
+
+        [AllowAnonymous]
+        public ActionResult Login()
+        {
             return View();
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult GoogleLogin(string returnUrl)
+        [ValidateAntiForgeryToken]
+        public ActionResult GoogleLogin()
         {
-            return new ChallengeResult("Google", Url.Action("GoogleLoginCallback", "Account", new { ReturnUrl = returnUrl }));
-
+            var properties = new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("GoogleLoginCallback", "Account")
+            };
+            HttpContext.GetOwinContext().Authentication.Challenge(properties, "Google");
+            return new HttpUnauthorizedResult();
         }
 
         [AllowAnonymous]
         public async Task<ActionResult> GoogleLoginCallback(string returnUrl)
         {
-            ExternalLoginInfo loginInfo = await HttpContext.GetOwinContext().Authentication.GetExternalLoginInfoAsync();
+            var loginInfo = await HttpContext.GetOwinContext().Authentication.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
                 return RedirectToAction("Login");
             }
-            return Redirect(returnUrl ?? "/");
-        }
-
-        private const string XsrfKey = "XsrfId";
-
-        internal class ChallengeResult : HttpUnauthorizedResult
-        {
-            public ChallengeResult(string provider, string redirectUri)
-                : this(provider, redirectUri, null)
+            if (dumpData.Contains(loginInfo.Email))
             {
-            }
-
-            public ChallengeResult(string provider, string redirectUri, string userId)
-            {
-                LoginProvider = provider;
-                RedirectUri = redirectUri;
-                UserId = userId;
-            }
-
-            public string LoginProvider { get; set; }
-            public string RedirectUri { get; set; }
-            public string UserId { get; set; }
-
-            public override void ExecuteResult(ControllerContext context)
-            {
-                var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
-                if (UserId != null)
+                var identity = new ClaimsIdentity(new[]
                 {
-                    properties.Dictionary[XsrfKey] = UserId;
+                    new Claim(ClaimTypes.Name, loginInfo.DefaultUserName),
+                    new Claim(ClaimTypes.Email, loginInfo.Email),
+                }, DefaultAuthenticationTypes.ApplicationCookie);
+
+                HttpContext.GetOwinContext().Authentication.SignIn(
+                    new AuthenticationProperties()
+                    {
+                        IsPersistent = false
+                    }, identity);
+
+                if (Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
                 }
-                context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
+                return RedirectToAction("Index", "Home");
             }
+            return View("Register", ViewBag.Email = loginInfo.Email);
         }
+
     }
 }

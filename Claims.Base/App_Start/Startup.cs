@@ -1,9 +1,7 @@
-﻿using System;
-using Claims.Base;
+﻿using Claims.Base;
 using Claims.Base.App_Start;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
@@ -22,6 +20,11 @@ namespace Claims.Base
         private void ConfigureApp(IAppBuilder app)
         {
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions()
+            {
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
+            });
 
             app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             {
