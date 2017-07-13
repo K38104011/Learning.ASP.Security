@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Login";
+    
+}
+
+<h2>Login</h2>
+
+@{
+    using (Html.BeginForm("GoogleLogin", "Account"))
+    {
+        <button class="btn btn-primary" type="submit">Log in via Google</button>
+    }
+}
+

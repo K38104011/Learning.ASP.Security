@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
 
-namespace Claims.Base.Controllers
+namespace Claims.Base.ApiControllers
 {
     public class HomeController : ApiController
     {
